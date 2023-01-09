@@ -1,0 +1,8 @@
+server:
+  host: 0.0.0.0
+  port: 8080
+
+service:
+  bonus_url: http://bonus:8050
+  flight_url: http://flight:8060
+  ticket_url: http://ticket:8070

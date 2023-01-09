@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS flight;
+DROP TABLE IF EXISTS airport;

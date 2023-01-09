@@ -1,0 +1,36 @@
+bonus:
+  port: 8050
+  image:
+    repository: lnq99/rsoi-2022-bonus
+    tag: 1.0
+  database:
+    name: privileges
+    username: program
+    password: test
+
+flight:
+  port: 8060
+  image:
+    repository: lnq99/rsoi-2022-flight
+    tag: 1.0
+  database:
+    name: flights
+    username: program
+    password: test
+
+ticket:
+  port: 8070
+  image:
+    repository: lnq99/rsoi-2022-ticket
+    tag: 1.0
+  database:
+    name: tickets
+    username: program
+    password: test
+
+gateway:
+  port: 8080
+  image:
+    repository: lnq99/rsoi-2022-gateway
+    tag: 1.0
+  isGateway: true

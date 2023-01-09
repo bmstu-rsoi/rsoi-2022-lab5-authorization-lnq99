@@ -13,13 +13,30 @@ jobs:
 
       - uses: docker/setup-buildx-action@v2
 
-      # TODO build, publish to docker hub, deploy to k8s
+      - name: Build images
+        timeout-minutes: 10
+        run: docker compose build
+
+      - name: Push images
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker compose push
+
+      - name: Create kube config
+        run: |
+          mkdir $HOME/.kube
+          echo ${{ secrets.KUBE_CONFIG }} | base64 -d > $HOME/.kube/config
+
+      - name: Deploy to K8S
+        run: |
+          helm delete svc && helm install svc k8s/services
+          sleep 30
 
       - name: Run API Tests
         uses: matt-ball/newman-action@master
         with:
-          collection: <variant>/postman/collection.json
-          environment: <variant>/postman/environment.json
+          collection: v1/postman/collection.json
+          environment: v1/postman/environment.json
           delayRequest: 100
           reporters: '[ "cli" ]'
 
