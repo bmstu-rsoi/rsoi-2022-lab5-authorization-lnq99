@@ -4,32 +4,37 @@
 	"values": [
 		{
 			"key": "serviceUrl",
-			"value": "",
+			"value": "157.230.65.64",
 			"enabled": true
 		},
 		{
 			"key": "identityProviderUrl",
-			"value": "",
+			"value": "https://lnq99.eu.auth0.com",
 			"enabled": true
 		},
 		{
 			"key": "username",
-			"value": "",
+			"value": "username",
 			"enabled": true
 		},
 		{
 			"key": "password",
-			"value": "",
+			"value": "password",
 			"enabled": true
 		},
 		{
 			"key": "clientId",
-			"value": "",
+			"value": "NdWnkfIKtXUkf9IJOU1mZwrMS7w15Z6Q",
 			"enabled": true
 		},
 		{
 			"key": "clientSecret",
-			"value": "",
+			"value": "YiFGViDUYgOXIldWw7a4crJ_w6zHx6b_hxwHTbfm5da7yUva-JSocJ1Y0KvSCu1W",
+			"enabled": true
+		},
+		{
+			"key": "audience",
+			"value": "rsoi",
 			"enabled": true
 		}
 	],

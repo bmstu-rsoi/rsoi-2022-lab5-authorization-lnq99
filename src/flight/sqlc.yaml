@@ -1,0 +1,10 @@
+version: 1
+packages:
+  - path: "./repository"
+    name: "repository"
+    engine: "postgresql"
+    schema: "db/000001_init.up.sql"
+    queries: "db/query.sql"
+    emit_json_tags: true
+    emit_interface: true
+    json_tags_case_style: "camel"

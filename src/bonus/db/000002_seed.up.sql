@@ -1,0 +1,18 @@
+-- INSERT INTO privilege(username, status, balance)
+-- VALUES
+--     ('User 1', 'BRONZE', 100),
+--     ('User 2', 'SILVER', 200),
+--     ('User 3', 'BRONZE', 300),
+--     ('User 4', 'GOLD', 400)
+-- ON CONFLICT
+-- DO NOTHING;
+--
+-- INSERT INTO privilege_history(privilege_id, ticket_uid, datetime, balance_diff, operation_type)
+-- VALUES
+--     (1, 'f7f00108-5a1a-11ed-9b6a-0242ac120002', '2021-10-08T19:59:19Z', 100, 'FILL_IN_BALANCE'),
+--     (1, 'f7f0050e-5a1a-11ed-9b6a-0242ac120002', '2021-10-09T19:59:19Z', 200, 'FILL_IN_BALANCE'),
+--     (2, 'f7f00720-5a1a-11ed-9b6a-0242ac120002', '2021-10-10T19:59:19Z', 300, 'DEBIT_THE_ACCOUNT'),
+--     (2, 'f7f0090a-5a1a-11ed-9b6a-0242ac120002', '2021-10-11T19:59:19Z', 400, 'FILL_IN_BALANCE'),
+--     (3, '38c702a8-5a1b-11ed-9b6a-0242ac120002', '2021-10-12T19:59:19Z', 500, 'DEBIT_THE_ACCOUNT')
+-- ON CONFLICT
+-- DO NOTHING;

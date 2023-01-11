@@ -1,0 +1,79 @@
+version: "3"
+services:
+  postgres:
+    image: library/postgres:15
+    container_name: db
+    restart: on-failure
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./postgres/:/docker-entrypoint-initdb.d/
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:alpine
+    container_name: queue
+    restart: on-failure
+    ports:
+      - "6379:6379"
+
+  bonus:
+    platform: linux/amd64
+    image: lnq99/rsoi-2022-bonus:1.1
+    container_name: bonus
+    build:
+      context: src/bonus
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - "8050:8050"
+
+  flight:
+    platform: linux/amd64
+    image: lnq99/rsoi-2022-flight:1.1
+    container_name: flight
+    build:
+      context: src/flight
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - "8060:8060"
+
+  ticket:
+    platform: linux/amd64
+    image: lnq99/rsoi-2022-ticket:1.1
+    container_name: ticket
+    build:
+      context: src/ticket
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - "8070:8070"
+
+  gateway:
+    platform: linux/amd64
+    image: lnq99/rsoi-2022-gateway:1.1
+    container_name: gateway
+    build:
+      context: src/gateway
+      dockerfile: Dockerfile
+    depends_on:
+      - bonus
+      - flight
+      - ticket
+      - redis
+    ports:
+      - "8080:8080"
+    environment:
+      - AUTH0_DOMAIN=lnq99.eu.auth0.com
+      - AUTH0_AUDIENCE=rsoi
+
+volumes:
+  db-data:

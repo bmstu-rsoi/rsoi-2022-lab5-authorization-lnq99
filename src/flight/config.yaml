@@ -1,0 +1,6 @@
+db:
+  url: postgresql://program:test@db:5432/flights?sslmode=disable
+
+server:
+  host: 0.0.0.0
+  port: 8060

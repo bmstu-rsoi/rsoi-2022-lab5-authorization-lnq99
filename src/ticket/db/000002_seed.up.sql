@@ -1,0 +1,9 @@
+-- INSERT INTO ticket(ticket_uid,username,flight_number,price,status)
+-- VALUES
+--     ('f7f00108-5a1a-11ed-9b6a-0242ac120002', 'User 1', 'Flight 1', 100, 'PAID'),
+--     ('f7f0050e-5a1a-11ed-9b6a-0242ac120002', 'User 1', 'Flight 2', 200, 'PAID'),
+--     ('f7f00720-5a1a-11ed-9b6a-0242ac120002', 'User 2', 'Flight 3', 300, 'CANCELED'),
+--     ('f7f0090a-5a1a-11ed-9b6a-0242ac120002', 'User 4', 'Flight 4', 400, 'PAID'),
+--     ('38c702a8-5a1b-11ed-9b6a-0242ac120002', 'User 3', 'Flight 2', 500, 'CANCELED')
+-- ON CONFLICT
+-- DO NOTHING;

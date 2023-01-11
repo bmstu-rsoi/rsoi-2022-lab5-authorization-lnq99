@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    app.kubernetes.io/component: database
+    app.kubernetes.io/managed-by: helm
+
+data:
+  10-create-user-and-dbs.sql: |
+    {{- range $user := .Values.users }}
+    CREATE USER {{ $user.name }} WITH PASSWORD '{{ $user.password }}';
+    {{- end }}
+
+    {{- range $database := .Values.databases }}
+    CREATE DATABASE {{ $database.name }};
+    GRANT ALL PRIVILEGES ON DATABASE {{ $database.name }} TO {{ $database.user }};
+    {{- end }}
+
+  20-grant-privileges-to-public.sh: |
+    export PGPASSWORD={{ .Values.defaultDatabase.password }}
+    {{- range $database := .Values.databases }}
+    psql -U {{ $.Values.defaultDatabase.user }} -d {{ $database.name }} -c "GRANT ALL PRIVILEGES ON SCHEMA public TO {{ $database.user }};"
+    {{- end }}
+
+  30-db-v1-create-tables-and-seed.sql: |
+    {{- range $user := .Values.users }}
+    \c tickets {{ $user.name }};
+    CREATE TABLE ticket
+    (
+        id            SERIAL PRIMARY KEY,
+        ticket_uid    uuid UNIQUE NOT NULL,
+        username      VARCHAR(80) NOT NULL,
+        flight_number VARCHAR(20) NOT NULL,
+        price         INT         NOT NULL,
+        status        VARCHAR(20) NOT NULL
+            CHECK (status IN ('PAID', 'CANCELED'))
+    );
+
+    \c flights {{ $user.name }};
+    CREATE TABLE airport
+    (
+        id      SERIAL PRIMARY KEY,
+        name    VARCHAR(255) NOT NULL,
+        city    VARCHAR(255) NOT NULL,
+        country VARCHAR(255) NOT NULL
+    );
+    CREATE TABLE flight
+    (
+        id              SERIAL PRIMARY KEY,
+        flight_number   VARCHAR(20)              NOT NULL,
+        datetime        TIMESTAMP WITH TIME ZONE NOT NULL,
+        from_airport_id INT REFERENCES airport (id) NOT NULL,
+        to_airport_id   INT REFERENCES airport (id) NOT NULL,
+        price           INT                      NOT NULL
+    );
+    INSERT INTO airport(name, city, country)
+    VALUES
+        ('Шереметьево', 'Москва', 'Россия'),
+        ('Пулково', 'Санкт-Петербург', 'Россия')
+        ON CONFLICT
+    DO NOTHING;
+    INSERT INTO flight(flight_number, datetime, from_airport_id, to_airport_id, price)
+    VALUES
+        ('AFL031', '2021-10-08 20:00', 2, 1, 1500)
+        ON CONFLICT
+    DO NOTHING;
+
+    \c privileges {{ $user.name }};
+    CREATE TABLE privilege
+    (
+        id       SERIAL PRIMARY KEY,
+        username VARCHAR(80) NOT NULL UNIQUE,
+        status   VARCHAR(80) NOT NULL DEFAULT 'BRONZE'
+            CHECK (status IN ('BRONZE', 'SILVER', 'GOLD')),
+        balance  INT NOT NULL
+    );
+    CREATE TABLE privilege_history
+    (
+        id             SERIAL PRIMARY KEY,
+        privilege_id   INT REFERENCES privilege (id) NOT NULL,
+        ticket_uid     uuid        NOT NULL,
+        datetime       TIMESTAMP   NOT NULL,
+        balance_diff   INT         NOT NULL,
+        operation_type VARCHAR(20) NOT NULL
+            CHECK (operation_type IN ('FILL_IN_BALANCE', 'DEBIT_THE_ACCOUNT'))
+    );
+    {{- end }}

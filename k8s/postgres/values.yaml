@@ -1,0 +1,31 @@
+image:
+  repository: postgres
+  pullPolicy: IfNotPresent
+  tag: 15
+
+port: 5432
+
+defaultDatabase:
+  name: postgres
+  user: postgres
+  password: postgres
+
+users:
+  - name: program
+    password: test
+
+databases:
+  - name: tickets
+    user: program
+  - name: flights
+    user: program
+  - name: privileges
+    user: program
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 200m
+    memory: 512Mi
