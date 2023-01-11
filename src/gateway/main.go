@@ -13,16 +13,8 @@ func main() {
 		panic(err)
 	}
 
-	app := fiber.New()
-
-	//app.Get("/", func(c *fiber.Ctx) error {
-	//	return c.SendString("Hello, World 👋!")
-	//})
-
-	apiVersion := "api/v1"
-
 	{
-		services.ApiVersion = apiVersion
+		services.ApiVersion = "v1"
 		services.BonusServiceIP = cfg.Service.BonusUrl
 		services.FlightServiceIP = cfg.Service.FlightUrl
 		services.TicketServiceIP = cfg.Service.TicketUrl
@@ -30,12 +22,18 @@ func main() {
 
 	//url := func(url, path string) string { return fmt.Sprintf("%s/%s/%s", url, apiVersion, path) }
 
+	app := fiber.New()
+
 	app.Get("manage/health", func(ctx *fiber.Ctx) error {
 		ctx.Status(fiber.StatusOK)
 		return nil
 	})
+	//app.Get("api/v1/authorize", services.Authorize)
+	//app.Get("api/v1/callback", services.Callback)
 
-	v1 := app.Group(apiVersion)
+	api := app.Group("api", services.IsAuthenticated)
+
+	v1 := api.Group("v1")
 	{
 		//v1.Get("flights", proxy.Forward(url(cfg.Service.FlightUrl, "flights")))
 		//v1.All("tickets", proxy.Forward(url(cfg.Service.TicketUrl, "tickets")))
@@ -44,7 +42,7 @@ func main() {
 		v1.Get("me", services.GetMe)
 	}
 
-	s := services.FiberServer{app}
+	s := services.FiberRouter{api}
 	{
 		s.RegisterService(services.NewFlightService())
 		s.RegisterService(services.NewTicketService())

@@ -10,9 +10,13 @@ import (
 )
 
 func GetMe(c *fiber.Ctx) error {
-	url1 := fmt.Sprintf("%s/%s/tickets", TicketServiceIP, ApiVersion)
-	url2 := fmt.Sprintf("%s/%s/privilege", BonusServiceIP, ApiVersion)
-	header := map[string]string{UsernameHeader: c.GetReqHeaders()[UsernameHeader]}
+	url1 := fmt.Sprintf("%s/api/%s/tickets", TicketServiceIP, ApiVersion)
+	url2 := fmt.Sprintf("%s/api/%s/privilege", BonusServiceIP, ApiVersion)
+	//header := map[string]string{
+	//	AuthHeader:     c.GetReqHeaders()[AuthHeader],
+	//	UsernameHeader: c.GetReqHeaders()[UsernameHeader],
+	//}
+	header := c.GetReqHeaders()
 
 	var r model.UserInfoResponse
 

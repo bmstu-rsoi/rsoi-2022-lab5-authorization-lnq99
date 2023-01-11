@@ -11,11 +11,12 @@ import (
 )
 
 var (
-	ApiVersion      = "api/v1"
+	ApiVersion      = "v1"
 	BonusServiceIP  = ""
 	FlightServiceIP = ""
 	TicketServiceIP = ""
 	Client          = &http.Client{}
+	AuthHeader      = "Authorization"
 	UsernameHeader  = model.UsernameHeader
 )
 
@@ -37,15 +38,15 @@ type Service struct {
 	Endpoints []Endpoint
 }
 
-type FiberServer struct {
-	App *fiber.App
+type FiberRouter struct {
+	Router fiber.Router
 }
 
-func (s FiberServer) RegisterRoute(e *Endpoint, prefix string) {
-	s.App.Add(e.Method, prefix+e.Path, e.Handler)
+func (s FiberRouter) RegisterRoute(e *Endpoint, prefix string) {
+	s.Router.Add(e.Method, prefix+e.Path, e.Handler)
 }
 
-func (s FiberServer) RegisterService(service Service) {
+func (s FiberRouter) RegisterService(service Service) {
 	prefix := service.Info.ApiVersion + "/" + service.Info.Path + "/"
 	for _, e := range service.Endpoints {
 		s.RegisterRoute(&e, prefix)

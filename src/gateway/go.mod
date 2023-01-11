@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/adjust/rmq/v5 v5.0.1
+	github.com/auth0/go-jwt-middleware/v2 v2.1.0
 	github.com/gofiber/fiber/v2 v2.40.1
 	github.com/lnq99/rsoi-2022-lab3-fault-tolerance-lnq99/src/pkg v0.0.0-20221210144115-98c6eafcbbb4
 	github.com/sony/gobreaker v0.5.0
@@ -24,15 +25,18 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/mattn/go-runewidth v0.0.14 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
-	github.com/stretchr/testify v1.8.0 // indirect
+	github.com/stretchr/testify v1.8.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.41.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	go.opentelemetry.io/otel v0.13.0 // indirect
 	golang.org/x/crypto v0.0.0-20220829220503-c86fa9a7ed90 // indirect
-	golang.org/x/sys v0.0.0-20220811171246-fbc7d0a398ab // indirect
-	golang.org/x/text v0.3.8 // indirect
+	golang.org/x/net v0.5.0 // indirect
+	golang.org/x/sys v0.4.0 // indirect
+	golang.org/x/text v0.6.0 // indirect
+	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 )

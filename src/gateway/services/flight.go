@@ -31,7 +31,7 @@ func GetFlights(c *fiber.Ctx) error {
 	url := FlightServiceIP + c.OriginalURL()
 
 	r, err := CallServiceWithCircuitBreaker(
-		flightCb, "GET", url, nil, nil)
+		flightCb, "GET", url, c.GetReqHeaders(), nil)
 
 	return fiberProcessResponse[model.PaginationResponse](c, r.status, r.body, err)
 }
@@ -40,7 +40,7 @@ func GetFlight(c *fiber.Ctx) error {
 	url := FlightServiceIP + c.OriginalURL()
 
 	r, err := CallServiceWithCircuitBreaker(
-		flightCb, "GET", url, nil, nil)
+		flightCb, "GET", url, c.GetReqHeaders(), nil)
 
 	return fiberProcessResponse[model.FlightResponse](c, r.status, r.body, err)
 }

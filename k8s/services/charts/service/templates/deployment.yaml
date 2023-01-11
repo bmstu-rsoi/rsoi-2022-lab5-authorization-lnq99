@@ -26,10 +26,14 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          imagePullPolicy: IfNotPresent
           env:
             - name: GIN_MODE
               value: release
+            - name: AUTH0_DOMAIN
+              value: lnq99.eu.auth0.com
+            - name: AUTH0_AUDIENCE
+              value: rsoi
           ports:
             - name: {{ .Chart.Name }}
               containerPort: {{ .Values.port }}

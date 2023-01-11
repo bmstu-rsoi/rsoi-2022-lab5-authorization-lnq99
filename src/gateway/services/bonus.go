@@ -78,7 +78,7 @@ func ForwardToBonusService(c *fiber.Ctx) error {
 
 func GetBonus(c *fiber.Ctx) error {
 	url := BonusServiceIP + c.OriginalURL()
-	header := map[string]string{UsernameHeader: c.GetReqHeaders()[UsernameHeader]}
+	header := c.GetReqHeaders()
 
 	r, err := CallServiceWithCircuitBreaker(
 		bonusCb, "GET", url, header, nil)
@@ -95,13 +95,12 @@ func DeleteBonus(c *fiber.Ctx) error {
 	//body := bytes.NewReader(c.Body())
 
 	r, _ := CallServiceWithCircuitBreaker(
-		bonusCb, "DELETE", url, nil, nil)
+		bonusCb, "DELETE", url, c.GetReqHeaders(), nil)
 
 	if r.status == http.StatusServiceUnavailable {
 		taskBytes, _ := json.Marshal(DeleteBonusTask{
 			Url: url,
 		})
-		log.Println(url)
 		BonusDeleteQueue.PublishBytes(taskBytes)
 	}
 
@@ -117,7 +116,7 @@ func consumeDeleteBonusTask(delivery rmq.Delivery) {
 	if err == nil {
 		r, err := CallServiceWithCircuitBreaker(
 			bonusCb, "DELETE", task.Url, nil, nil)
-		
+
 		if err == nil && r.status == http.StatusNoContent {
 			delivery.Ack()
 		} else {

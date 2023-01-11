@@ -31,7 +31,7 @@ func ForwardToTicketService(c *fiber.Ctx) error {
 
 func GetTickets(c *fiber.Ctx) error {
 	url := TicketServiceIP + c.OriginalURL()
-	header := map[string]string{UsernameHeader: c.GetReqHeaders()[UsernameHeader]}
+	header := c.GetReqHeaders()
 
 	r, err := CallServiceWithCircuitBreaker(
 		ticketCb, "GET", url, header, nil)
@@ -41,7 +41,7 @@ func GetTickets(c *fiber.Ctx) error {
 
 func GetTicket(c *fiber.Ctx) error {
 	url := TicketServiceIP + c.OriginalURL()
-	header := map[string]string{UsernameHeader: c.GetReqHeaders()[UsernameHeader]}
+	header := c.GetReqHeaders()
 
 	r, err := CallServiceWithCircuitBreaker(
 		ticketCb, "GET", url, header, nil)

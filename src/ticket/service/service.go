@@ -20,6 +20,7 @@ import (
 const (
 	GatewayUrl     = "http://gateway:8080"
 	UsernameHeader = model.UsernameHeader
+	AuthHeader     = "Authorization"
 )
 
 type Service interface {
@@ -37,10 +38,14 @@ func NewService(repo repository.Repo) Service {
 	return &serviceImpl{repo: repo}
 }
 
-func toTicketResponse(t *model.Ticket) *model.TicketResponse {
+func toTicketResponse(ctx context.Context, t *model.Ticket) *model.TicketResponse {
 
 	url := fmt.Sprintf("%s/%s/%s", GatewayUrl, "api/v1", "flights"+"/"+t.FlightNumber)
-	res, err := http.Get(url)
+	client := &http.Client{Timeout: 5 * time.Second}
+
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Set(AuthHeader, ctx.Value(AuthHeader).(string))
+	res, err := client.Do(req)
 	if err != nil {
 		return nil
 	}
@@ -71,7 +76,7 @@ func (s *serviceImpl) ListTickets(ctx context.Context, username string) []*model
 	r := make([]*model.TicketResponse, len(tickets))
 	for i, t := range tickets {
 		t1 := model.Ticket(t)
-		r[i] = toTicketResponse(&t1)
+		r[i] = toTicketResponse(ctx, &t1)
 	}
 	return r
 }
@@ -89,7 +94,7 @@ func (s *serviceImpl) GetTicket(ctx context.Context, username, ticketUid string)
 		return nil
 	}
 	r := model.Ticket(ticket)
-	return toTicketResponse(&r)
+	return toTicketResponse(ctx, &r)
 }
 
 func (s *serviceImpl) CreateTicket(ctx context.Context, username string, ticketReq *model.TicketPurchaseRequest) (*model.TicketPurchaseResponse, error) {
@@ -97,9 +102,12 @@ func (s *serviceImpl) CreateTicket(ctx context.Context, username string, ticketR
 	client := &http.Client{Timeout: 5 * time.Second}
 	flight := model.FlightResponse{}
 
+	authHeader := ctx.Value(AuthHeader).(string)
+
 	{
 		url = fmt.Sprintf("%s/%s/%s", GatewayUrl, "api/v1", "flights"+"/"+ticketReq.FlightNumber)
 		req, _ := http.NewRequest("GET", url, nil)
+		req.Header.Set(AuthHeader, authHeader)
 		res, err := client.Do(req)
 		if err != nil {
 			return nil, err
@@ -130,6 +138,7 @@ func (s *serviceImpl) CreateTicket(ctx context.Context, username string, ticketR
 	{
 		url = fmt.Sprintf("%s/%s/%s", GatewayUrl, "api/v1", "privilege")
 		req, _ := http.NewRequest("GET", url, nil)
+		req.Header.Set(AuthHeader, authHeader)
 		req.Header.Set(UsernameHeader, t.Username)
 		res, err := client.Do(req)
 		if err != nil {
@@ -188,7 +197,9 @@ func (s *serviceImpl) CreateTicket(ctx context.Context, username string, ticketR
 		body, _ := json.Marshal(balanceHistory)
 
 		req, _ := http.NewRequest("POST", url, bytes.NewReader(body))
+		req.Header.Set(AuthHeader, authHeader)
 		req.Header.Set(UsernameHeader, t.Username)
+
 		res, err := client.Do(req)
 		if err != nil {
 			return nil, err
@@ -224,6 +235,7 @@ func (s *serviceImpl) DeleteTicket(ctx context.Context, username, ticketUid stri
 	client := &http.Client{Timeout: 5 * time.Second}
 	url := fmt.Sprintf("%s/%s/%s/%s", GatewayUrl, "api/v1", "privilege", ticketUid)
 	req, _ := http.NewRequest("DELETE", url, nil)
+	req.Header.Set(AuthHeader, ctx.Value(AuthHeader).(string))
 	req.Header.Set(UsernameHeader, username)
 	client.Do(req)
 

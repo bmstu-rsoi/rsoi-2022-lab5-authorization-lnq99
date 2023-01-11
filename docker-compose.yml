@@ -71,6 +71,9 @@ services:
       - redis
     ports:
       - "8080:8080"
+    environment:
+      - AUTH0_DOMAIN=lnq99.eu.auth0.com
+      - AUTH0_AUDIENCE=rsoi
 
 volumes:
   db-data:
